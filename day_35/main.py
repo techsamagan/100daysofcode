@@ -1,34 +1,39 @@
 import requests
 from twilio.rest import Client
 
-OWM_Endpoint = "https://api.openweathermap.org/data/2.5/forecast"
-api_key = "__YOUR_OWM_API_KEY__"
-account_sid = "__YOUR_TWILIO_ACCOUNT_ID__"
-auth_token = "__YOUR_TWILIO_AUTH_TOKEN__"
 
-weather_params = {
-    "lat": 46.947975,
-    "lon": 7.447447,
-    "appid": api_key,
+LAT = 42.882004
+LON = 74.582748
+API_KEY = "c6a673dafaaef334411f73a463a4031d"
+parameter = {
+    "lat": LAT,
+    "lon": LON,
+    "appid": API_KEY,
     "cnt": 4,
 }
+URL = "https://api.openweathermap.org/data/2.5/forecast"
 
-response = requests.get(OWM_Endpoint, params=weather_params)
+ACC_SID = "__"
+AUTH_TOKEN = "__"
+
+response = requests.get(url=URL, params=parameter)
 response.raise_for_status()
-weather_data = response.json()
-# print(weather_data["list"][0]["weather"][0]["id"])
+data = response.json()
 
+print(data["list"][0]["weather"][0]["id"])
 will_rain = False
-for hour_data in weather_data["list"]:
+for hour_data in data["list"]:
     condition_code = hour_data["weather"][0]["id"]
-    if int(condition_code) < 700:
+    if int(condition_code) > 700:
         will_rain = True
+
 if will_rain:
-    client = Client(account_sid, auth_token)
+    client = Client(ACC_SID, AUTH_TOKEN)
     message = client.messages \
         .create(
-        body="It's going to rain today. Remember to bring an ☔️",
-        from_="YOUR TWILIO VIRTUAL NUMBER",
-        to="YOUR TWILIO VERIFIED REAL NUMBER"
-    )
-    print(message.status)
+        body="Do not forget your umbrella!",
+        from_ = "trial_num",
+        to="phone_num")
+
+
+print(message.status)
